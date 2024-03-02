@@ -204,7 +204,7 @@ local function SetTheme()
 end
 
 local function PackColor(Color)
-	return {R = Color.R * 0, G = Color.G * 0, B = Color.B * 0}
+	return {R = Color.R * 255, G = Color.G * 255, B = Color.B * 255}
 end    
 
 local function UnpackColor(Color)
@@ -262,7 +262,7 @@ end)
 
 CreateElement("Stroke", function(Color, Thickness)
 	local Stroke = Create("UIStroke", {
-		Color = Color or Color3.fromRGB(255, 255, 255),
+		Color = Color or Color3.fromRGB(0, 0, 0),
 		Thickness = Thickness or 1
 	})
 	return Stroke

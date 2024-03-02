@@ -5,7 +5,7 @@ local LocalPlayer = game:GetService("Players").LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 local HttpService = game:GetService("HttpService")
 
-local menonerLib = {
+local MenonerLib = {
 	Elements = {},
 	ThemeObjects = {},
 	Connections = {},
@@ -44,53 +44,53 @@ local function GetIcon(IconName)
 	end
 end   
 
-local menoner = Instance.new("ScreenGui")
-menoner.Name = "menoner"
+local Menoner = Instance.new("ScreenGui")
+Menoner.Name = "Menoner"
 if syn then
-	syn.protect_gui(menoner)
-	menoner.Parent = game.CoreGui
+	syn.protect_gui(Menoner)
+	Menoner.Parent = game.CoreGui
 else
-	menoner.Parent = gethui() or game.CoreGui
+	Menoner.Parent = gethui() or game.CoreGui
 end
 
 if gethui then
 	for _, Interface in ipairs(gethui():GetChildren()) do
-		if Interface.Name == menoner.Name and Interface ~= menoner then
+		if Interface.Name == Menoner.Name and Interface ~= Menoner then
 			Interface:Destroy()
 		end
 	end
 else
 	for _, Interface in ipairs(game.CoreGui:GetChildren()) do
-		if Interface.Name == menoner.Name and Interface ~= menoner then
+		if Interface.Name == Menoner.Name and Interface ~= Menoner then
 			Interface:Destroy()
 		end
 	end
 end
 
-function menonerLib:IsRunning()
+function MenonerLib:IsRunning()
 	if gethui then
-		return menoner.Parent == gethui()
+		return Menoner.Parent == gethui()
 	else
-		return menoner.Parent == game:GetService("CoreGui")
+		return Menoner.Parent == game:GetService("CoreGui")
 	end
 
 end
 
 local function AddConnection(Signal, Function)
-	if (not menonerLib:IsRunning()) then
+	if (not MenonerLib:IsRunning()) then
 		return
 	end
 	local SignalConnect = Signal:Connect(Function)
-	table.insert(menonerLib.Connections, SignalConnect)
+	table.insert(MenonerLib.Connections, SignalConnect)
 	return SignalConnect
 end
 
 task.spawn(function()
-	while (menonerLib:IsRunning()) do
+	while (MenonerLib:IsRunning()) do
 		wait()
 	end
 
-	for _, Connection in next, menonerLib.Connections do
+	for _, Connection in next, MenonerLib.Connections do
 		Connection:Disconnect()
 	end
 end)
@@ -138,13 +138,13 @@ local function Create(Name, Properties, Children)
 end
 
 local function CreateElement(ElementName, ElementFunction)
-	menonerLib.Elements[ElementName] = function(...)
+	MenonerLib.Elements[ElementName] = function(...)
 		return ElementFunction(...)
 	end
 end
 
 local function MakeElement(ElementName, ...)
-	local NewElement = menonerLib.Elements[ElementName](...)
+	local NewElement = MenonerLib.Elements[ElementName](...)
 	return NewElement
 end
 
@@ -187,18 +187,18 @@ local function ReturnProperty(Object)
 end
 
 local function AddThemeObject(Object, Type)
-	if not menonerLib.ThemeObjects[Type] then
-		menonerLib.ThemeObjects[Type] = {}
+	if not MenonerLib.ThemeObjects[Type] then
+		MenonerLib.ThemeObjects[Type] = {}
 	end    
-	table.insert(menonerLib.ThemeObjects[Type], Object)
-	Object[ReturnProperty(Object)] = menonerLib.Themes[menonerLib.SelectedTheme][Type]
+	table.insert(MenonerLib.ThemeObjects[Type], Object)
+	Object[ReturnProperty(Object)] = MenonerLib.Themes[MenonerLib.SelectedTheme][Type]
 	return Object
 end    
 
 local function SetTheme()
-	for Name, Type in pairs(menonerLib.ThemeObjects) do
+	for Name, Type in pairs(MenonerLib.ThemeObjects) do
 		for _, Object in pairs(Type) do
-			Object[ReturnProperty(Object)] = menonerLib.Themes[menonerLib.SelectedTheme][Name]
+			Object[ReturnProperty(Object)] = MenonerLib.Themes[MenonerLib.SelectedTheme][Name]
 		end    
 	end    
 end
@@ -214,23 +214,23 @@ end
 local function LoadCfg(Config)
 	local Data = HttpService:JSONDecode(Config)
 	table.foreach(Data, function(a,b)
-		if menonerLib.Flags[a] then
+		if MenonerLib.Flags[a] then
 			spawn(function() 
-				if menonerLib.Flags[a].Type == "Colorpicker" then
-					menonerLib.Flags[a]:Set(UnpackColor(b))
+				if MenonerLib.Flags[a].Type == "Colorpicker" then
+					MenonerLib.Flags[a]:Set(UnpackColor(b))
 				else
-					menonerLib.Flags[a]:Set(b)
+					MenonerLib.Flags[a]:Set(b)
 				end    
 			end)
 		else
-			warn("menoner Library Config Loader - Could not find ", a ,b)
+			warn("Menoner Library Config Loader - Could not find ", a ,b)
 		end
 	end)
 end
 
 local function SaveCfg(Name)
 	local Data = {}
-	for i,v in pairs(menonerLib.Flags) do
+	for i,v in pairs(MenonerLib.Flags) do
 		if v.Save then
 			if v.Type == "Colorpicker" then
 				Data[i] = PackColor(v.Value)
@@ -239,7 +239,7 @@ local function SaveCfg(Name)
 			end
 		end	
 	end
-	writefile(menonerLib.Folder .. "/" .. Name .. ".txt", tostring(HttpService:JSONEncode(Data)))
+	writefile(MenonerLib.Folder .. "/" .. Name .. ".txt", tostring(HttpService:JSONEncode(Data)))
 end
 
 local WhitelistedMouse = {Enum.UserInputType.MouseButton1, Enum.UserInputType.MouseButton2,Enum.UserInputType.MouseButton3}
@@ -383,10 +383,10 @@ local NotificationHolder = SetProps(SetChildren(MakeElement("TFrame"), {
 	Position = UDim2.new(1, -25, 1, -25),
 	Size = UDim2.new(0, 300, 1, -25),
 	AnchorPoint = Vector2.new(1, 1),
-	Parent = menoner
+	Parent = Menoner
 })
 
-function menonerLib:MakeNotification(NotificationConfig)
+function MenonerLib:MakeNotification(NotificationConfig)
 	spawn(function()
 		NotificationConfig.Name = NotificationConfig.Name or "Notification"
 		NotificationConfig.Content = NotificationConfig.Content or "Test"
@@ -447,12 +447,12 @@ function menonerLib:MakeNotification(NotificationConfig)
 	end)
 end    
 
-function menonerLib:Init()
-	if menonerLib.SaveCfg then	
+function MenonerLib:Init()
+	if MenonerLib.SaveCfg then	
 		pcall(function()
-			if isfile(menonerLib.Folder .. "/" .. game.GameId .. ".txt") then
-				LoadCfg(readfile(menonerLib.Folder .. "/" .. game.GameId .. ".txt"))
-				menonerLib:MakeNotification({
+			if isfile(MenonerLib.Folder .. "/" .. game.GameId .. ".txt") then
+				LoadCfg(readfile(MenonerLib.Folder .. "/" .. game.GameId .. ".txt"))
+				MenonerLib:MakeNotification({
 					Name = "Configuration",
 					Content = "Auto-loaded configuration for the game " .. game.GameId .. ".",
 					Time = 5
@@ -462,27 +462,27 @@ function menonerLib:Init()
 	end	
 end	
 
-function menonerLib:MakeWindow(WindowConfig)
+function MenonerLib:MakeWindow(WindowConfig)
 	local FirstTab = true
 	local Minimized = false
 	local Loaded = false
 	local UIHidden = false
 
 	WindowConfig = WindowConfig or {}
-	WindowConfig.Name = WindowConfig.Name or "menoner Library"
+	WindowConfig.Name = WindowConfig.Name or "Menoner Library"
 	WindowConfig.ConfigFolder = WindowConfig.ConfigFolder or WindowConfig.Name
 	WindowConfig.SaveConfig = WindowConfig.SaveConfig or false
 	WindowConfig.HidePremium = WindowConfig.HidePremium or false
 	if WindowConfig.IntroEnabled == nil then
 		WindowConfig.IntroEnabled = true
 	end
-	WindowConfig.IntroText = WindowConfig.IntroText or "menoner Library"
+	WindowConfig.IntroText = WindowConfig.IntroText or "Menoner Library"
 	WindowConfig.CloseCallback = WindowConfig.CloseCallback or function() end
 	WindowConfig.ShowIcon = WindowConfig.ShowIcon or false
 	WindowConfig.Icon = WindowConfig.Icon or "rbxassetid://8834748103"
 	WindowConfig.IntroIcon = WindowConfig.IntroIcon or "rbxassetid://8834748103"
-	menonerLib.Folder = WindowConfig.ConfigFolder
-	menonerLib.SaveCfg = WindowConfig.SaveConfig
+	MenonerLib.Folder = WindowConfig.ConfigFolder
+	MenonerLib.SaveCfg = WindowConfig.SaveConfig
 
 	if WindowConfig.SaveConfig then
 		if not isfolder(WindowConfig.ConfigFolder) then
@@ -599,7 +599,7 @@ function menonerLib:MakeWindow(WindowConfig)
 	}), "Stroke")
 
 	local MainWindow = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 10), {
-		Parent = menoner,
+		Parent = Menoner,
 		Position = UDim2.new(0.5, -307, 0.5, -172),
 		Size = UDim2.new(0, 615, 0, 344),
 		ClipsDescendants = true
@@ -648,7 +648,7 @@ function menonerLib:MakeWindow(WindowConfig)
 	AddConnection(CloseBtn.MouseButton1Up, function()
 		MainWindow.Visible = false
 		UIHidden = true
-		menonerLib:MakeNotification({
+		MenonerLib:MakeNotification({
 			Name = "Interface Hidden",
 			Content = "Tap RightShift to reopen the interface",
 			Time = 5
@@ -685,7 +685,7 @@ function menonerLib:MakeWindow(WindowConfig)
 	local function LoadSequence()
 		MainWindow.Visible = false
 		local LoadSequenceLogo = SetProps(MakeElement("Image", WindowConfig.IntroIcon), {
-			Parent = menoner,
+			Parent = Menoner,
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.new(0.5, 0, 0.4, 0),
 			Size = UDim2.new(0, 28, 0, 28),
@@ -694,7 +694,7 @@ function menonerLib:MakeWindow(WindowConfig)
 		})
 
 		local LoadSequenceText = SetProps(MakeElement("Label", WindowConfig.IntroText, 14), {
-			Parent = menoner,
+			Parent = Menoner,
 			Size = UDim2.new(1, 0, 1, 0),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.new(0.5, 19, 0.5, 0),
@@ -884,22 +884,22 @@ function menonerLib:MakeWindow(WindowConfig)
 				}), "Second")
 
 				AddConnection(Click.MouseEnter, function()
-					TweenService:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(menonerLib.Themes[menonerLib.SelectedTheme].Second.R * 255 + 3, menonerLib.Themes[menonerLib.SelectedTheme].Second.G * 255 + 3, menonerLib.Themes[menonerLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+					TweenService:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(MenonerLib.Themes[MenonerLib.SelectedTheme].Second.R * 255 + 3, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.G * 255 + 3, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.B * 255 + 3)}):Play()
 				end)
 
 				AddConnection(Click.MouseLeave, function()
-					TweenService:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = menonerLib.Themes[menonerLib.SelectedTheme].Second}):Play()
+					TweenService:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = MenonerLib.Themes[MenonerLib.SelectedTheme].Second}):Play()
 				end)
 
 				AddConnection(Click.MouseButton1Up, function()
-					TweenService:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(menonerLib.Themes[menonerLib.SelectedTheme].Second.R * 255 + 3, menonerLib.Themes[menonerLib.SelectedTheme].Second.G * 255 + 3, menonerLib.Themes[menonerLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+					TweenService:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(MenonerLib.Themes[MenonerLib.SelectedTheme].Second.R * 255 + 3, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.G * 255 + 3, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.B * 255 + 3)}):Play()
 					spawn(function()
 						ButtonConfig.Callback()
 					end)
 				end)
 
 				AddConnection(Click.MouseButton1Down, function()
-					TweenService:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(menonerLib.Themes[menonerLib.SelectedTheme].Second.R * 255 + 6, menonerLib.Themes[menonerLib.SelectedTheme].Second.G * 255 + 6, menonerLib.Themes[menonerLib.SelectedTheme].Second.B * 255 + 6)}):Play()
+					TweenService:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(MenonerLib.Themes[MenonerLib.SelectedTheme].Second.R * 255 + 6, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.G * 255 + 6, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.B * 255 + 6)}):Play()
 				end)
 
 				function Button:Set(ButtonText)
@@ -959,8 +959,8 @@ function menonerLib:MakeWindow(WindowConfig)
 
 				function Toggle:Set(Value)
 					Toggle.Value = Value
-					TweenService:Create(ToggleBox, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Toggle.Value and ToggleConfig.Color or menonerLib.Themes.Default.Divider}):Play()
-					TweenService:Create(ToggleBox.Stroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Color = Toggle.Value and ToggleConfig.Color or menonerLib.Themes.Default.Stroke}):Play()
+					TweenService:Create(ToggleBox, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Toggle.Value and ToggleConfig.Color or MenonerLib.Themes.Default.Divider}):Play()
+					TweenService:Create(ToggleBox.Stroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Color = Toggle.Value and ToggleConfig.Color or MenonerLib.Themes.Default.Stroke}):Play()
 					TweenService:Create(ToggleBox.Ico, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {ImageTransparency = Toggle.Value and 0 or 1, Size = Toggle.Value and UDim2.new(0, 20, 0, 20) or UDim2.new(0, 8, 0, 8)}):Play()
 					ToggleConfig.Callback(Toggle.Value)
 				end    
@@ -968,25 +968,25 @@ function menonerLib:MakeWindow(WindowConfig)
 				Toggle:Set(Toggle.Value)
 
 				AddConnection(Click.MouseEnter, function()
-					TweenService:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(menonerLib.Themes[menonerLib.SelectedTheme].Second.R * 255 + 3, menonerLib.Themes[menonerLib.SelectedTheme].Second.G * 255 + 3, menonerLib.Themes[menonerLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+					TweenService:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(MenonerLib.Themes[MenonerLib.SelectedTheme].Second.R * 255 + 3, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.G * 255 + 3, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.B * 255 + 3)}):Play()
 				end)
 
 				AddConnection(Click.MouseLeave, function()
-					TweenService:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = menonerLib.Themes[menonerLib.SelectedTheme].Second}):Play()
+					TweenService:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = MenonerLib.Themes[MenonerLib.SelectedTheme].Second}):Play()
 				end)
 
 				AddConnection(Click.MouseButton1Up, function()
-					TweenService:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(menonerLib.Themes[menonerLib.SelectedTheme].Second.R * 255 + 3, menonerLib.Themes[menonerLib.SelectedTheme].Second.G * 255 + 3, menonerLib.Themes[menonerLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+					TweenService:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(MenonerLib.Themes[MenonerLib.SelectedTheme].Second.R * 255 + 3, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.G * 255 + 3, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.B * 255 + 3)}):Play()
 					SaveCfg(game.GameId)
 					Toggle:Set(not Toggle.Value)
 				end)
 
 				AddConnection(Click.MouseButton1Down, function()
-					TweenService:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(menonerLib.Themes[menonerLib.SelectedTheme].Second.R * 255 + 6, menonerLib.Themes[menonerLib.SelectedTheme].Second.G * 255 + 6, menonerLib.Themes[menonerLib.SelectedTheme].Second.B * 255 + 6)}):Play()
+					TweenService:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(MenonerLib.Themes[MenonerLib.SelectedTheme].Second.R * 255 + 6, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.G * 255 + 6, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.B * 255 + 6)}):Play()
 				end)
 
 				if ToggleConfig.Flag then
-					menonerLib.Flags[ToggleConfig.Flag] = Toggle
+					MenonerLib.Flags[ToggleConfig.Flag] = Toggle
 				end	
 				return Toggle
 			end  
@@ -1081,7 +1081,7 @@ function menonerLib:MakeWindow(WindowConfig)
 
 				Slider:Set(Slider.Value)
 				if SliderConfig.Flag then				
-					menonerLib.Flags[SliderConfig.Flag] = Slider
+					MenonerLib.Flags[SliderConfig.Flag] = Slider
 				end
 				return Slider
 			end  
@@ -1236,7 +1236,7 @@ function menonerLib:MakeWindow(WindowConfig)
 				Dropdown:Refresh(Dropdown.Options, false)
 				Dropdown:Set(Dropdown.Value)
 				if DropdownConfig.Flag then				
-					menonerLib.Flags[DropdownConfig.Flag] = Dropdown
+					MenonerLib.Flags[DropdownConfig.Flag] = Dropdown
 				end
 				return Dropdown
 			end
@@ -1334,19 +1334,19 @@ function menonerLib:MakeWindow(WindowConfig)
 				end)
 
 				AddConnection(Click.MouseEnter, function()
-					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(menonerLib.Themes[menonerLib.SelectedTheme].Second.R * 255 + 3, menonerLib.Themes[menonerLib.SelectedTheme].Second.G * 255 + 3, menonerLib.Themes[menonerLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(MenonerLib.Themes[MenonerLib.SelectedTheme].Second.R * 255 + 3, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.G * 255 + 3, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.B * 255 + 3)}):Play()
 				end)
 
 				AddConnection(Click.MouseLeave, function()
-					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = menonerLib.Themes[menonerLib.SelectedTheme].Second}):Play()
+					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = MenonerLib.Themes[MenonerLib.SelectedTheme].Second}):Play()
 				end)
 
 				AddConnection(Click.MouseButton1Up, function()
-					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(menonerLib.Themes[menonerLib.SelectedTheme].Second.R * 255 + 3, menonerLib.Themes[menonerLib.SelectedTheme].Second.G * 255 + 3, menonerLib.Themes[menonerLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(MenonerLib.Themes[MenonerLib.SelectedTheme].Second.R * 255 + 3, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.G * 255 + 3, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.B * 255 + 3)}):Play()
 				end)
 
 				AddConnection(Click.MouseButton1Down, function()
-					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(menonerLib.Themes[menonerLib.SelectedTheme].Second.R * 255 + 6, menonerLib.Themes[menonerLib.SelectedTheme].Second.G * 255 + 6, menonerLib.Themes[menonerLib.SelectedTheme].Second.B * 255 + 6)}):Play()
+					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(MenonerLib.Themes[MenonerLib.SelectedTheme].Second.R * 255 + 6, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.G * 255 + 6, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.B * 255 + 6)}):Play()
 				end)
 
 				function Bind:Set(Key)
@@ -1358,7 +1358,7 @@ function menonerLib:MakeWindow(WindowConfig)
 
 				Bind:Set(BindConfig.Default)
 				if BindConfig.Flag then				
-					menonerLib.Flags[BindConfig.Flag] = Bind
+					MenonerLib.Flags[BindConfig.Flag] = Bind
 				end
 				return Bind
 			end  
@@ -1425,20 +1425,20 @@ function menonerLib:MakeWindow(WindowConfig)
 				TextboxActual.Text = TextboxConfig.Default
 
 				AddConnection(Click.MouseEnter, function()
-					TweenService:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(menonerLib.Themes[menonerLib.SelectedTheme].Second.R * 255 + 3, menonerLib.Themes[menonerLib.SelectedTheme].Second.G * 255 + 3, menonerLib.Themes[menonerLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+					TweenService:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(MenonerLib.Themes[MenonerLib.SelectedTheme].Second.R * 255 + 3, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.G * 255 + 3, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.B * 255 + 3)}):Play()
 				end)
 
 				AddConnection(Click.MouseLeave, function()
-					TweenService:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = menonerLib.Themes[menonerLib.SelectedTheme].Second}):Play()
+					TweenService:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = MenonerLib.Themes[MenonerLib.SelectedTheme].Second}):Play()
 				end)
 
 				AddConnection(Click.MouseButton1Up, function()
-					TweenService:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(menonerLib.Themes[menonerLib.SelectedTheme].Second.R * 255 + 3, menonerLib.Themes[menonerLib.SelectedTheme].Second.G * 255 + 3, menonerLib.Themes[menonerLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+					TweenService:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(MenonerLib.Themes[MenonerLib.SelectedTheme].Second.R * 255 + 3, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.G * 255 + 3, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.B * 255 + 3)}):Play()
 					TextboxActual:CaptureFocus()
 				end)
 
 				AddConnection(Click.MouseButton1Down, function()
-					TweenService:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(menonerLib.Themes[menonerLib.SelectedTheme].Second.R * 255 + 6, menonerLib.Themes[menonerLib.SelectedTheme].Second.G * 255 + 6, menonerLib.Themes[menonerLib.SelectedTheme].Second.B * 255 + 6)}):Play()
+					TweenService:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(MenonerLib.Themes[MenonerLib.SelectedTheme].Second.R * 255 + 6, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.G * 255 + 6, MenonerLib.Themes[MenonerLib.SelectedTheme].Second.B * 255 + 6)}):Play()
 				end)
 			end 
 			function ElementFunction:AddColorpicker(ColorpickerConfig)
@@ -1622,7 +1622,7 @@ function menonerLib:MakeWindow(WindowConfig)
 
 				Colorpicker:Set(Colorpicker.Value)
 				if ColorpickerConfig.Flag then				
-					menonerLib.Flags[ColorpickerConfig.Flag] = Colorpicker
+					MenonerLib.Flags[ColorpickerConfig.Flag] = Colorpicker
 				end
 				return Colorpicker
 			end  
@@ -1727,7 +1727,7 @@ function menonerLib:MakeWindow(WindowConfig)
 	--				})
 	--			})
 	--		end
-	--		menonerLib:MakeNotification({
+	--		MenonerLib:MakeNotification({
 	--			Name = "UI Library Available",
 	--			Content = "New UI Library Available - Joining Discord (#announcements)",
 	--			Time = 8
@@ -1757,8 +1757,8 @@ function menonerLib:MakeWindow(WindowConfig)
 	return TabFunction
 end   
 
-function menonerLib:Destroy()
-	menoner:Destroy()
+function MenonerLib:Destroy()
+	Menoner:Destroy()
 end
 
-return menonerLib
+return MenonerLib

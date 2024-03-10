@@ -600,8 +600,8 @@ function MenonerLib:MakeWindow(WindowConfig)
 
 	local MainWindow = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 10), {
 		Parent = Menoner,
-		Position = UDim2.new(0.5, -307, 0.5, -172),
-		Size = UDim2.new(0, 615, 0, 344),
+		Position = UDim2.new(0.5, -280, 0.5, -150),
+		Size = UDim2.new(0, 500, 0, 300),
 		ClipsDescendants = true
 	}), {
 		--SetProps(MakeElement("Image", "rbxassetid://3523728077"), {

@@ -480,8 +480,8 @@ function MenonerLib:MakeWindow(WindowConfig)
 	WindowConfig.IntroText = WindowConfig.IntroText or "Menoner Library"
 	WindowConfig.CloseCallback = WindowConfig.CloseCallback or function() end
 	WindowConfig.ShowIcon = WindowConfig.ShowIcon or false
-	WindowConfig.Icon = WindowConfig.Icon or "rbxassetid://7733964640"
-	WindowConfig.IntroIcon = WindowConfig.IntroIcon or "rbxassetid://7733964640"
+	WindowConfig.Icon = WindowConfig.Icon or "rbxassetid://7743872365"
+	WindowConfig.IntroIcon = WindowConfig.IntroIcon or "rbxassetid://7743872365"
 	MenonerLib.Folder = WindowConfig.ConfigFolder
 	MenonerLib.SaveCfg = WindowConfig.SaveConfig
 

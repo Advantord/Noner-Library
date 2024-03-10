@@ -318,6 +318,7 @@ CreateElement("Button", function()
 		Text = "",
 		AutoButtonColor = false,
 		BackgroundTransparency = 1,
+                Size = UDim2.new(0, 150,0,30),
 		BorderSizePixel = 0
 	})
 	return Button

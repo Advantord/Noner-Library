@@ -453,11 +453,7 @@ function MenonerLib:Init()
 		pcall(function()
 			if isfile(MenonerLib.Folder .. "/" .. game.GameId .. ".txt") then
 				LoadCfg(readfile(MenonerLib.Folder .. "/" .. game.GameId .. ".txt"))
-				MenonerLib:MakeNotification({
-					Name = "Configuration",
-					Content = "Auto-loaded configuration for the game " .. game.GameId .. ".",
-					Time = 5
-				})
+				
 			end
 		end)		
 	end	
